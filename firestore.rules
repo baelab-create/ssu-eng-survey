@@ -1,8 +1,14 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // 관리자(교수님) — admin.html 에서 구글 로그인
+    function isOwner() {
+      return request.auth != null
+        && request.auth.token.email == 'baewongyu@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
     // 익명 의견수렴: 누구나 읽고 새 응답을 추가할 수 있음. 필드는 선택·의견·서버 시각 셋만.
-    // 수정·삭제는 클라이언트에서 불가(콘솔에서만).
+    // 수정은 아무도 못 하고, 삭제는 관리자만.
     match /ssu_survey/{id} {
       allow read: if true;
       allow create: if request.resource.data.keys().hasOnly(['position', 'comment', 'createdAt'])
@@ -10,7 +16,8 @@ service cloud.firestore {
         && request.resource.data.comment is string
         && request.resource.data.comment.size() <= 1500
         && request.resource.data.createdAt == request.time;
-      allow update, delete: if false;
+      allow update: if false;
+      allow delete: if isOwner();
     }
   }
 }

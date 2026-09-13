@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>의견수렴 관리</title>
+  <style>
+    :root { --navy: #15345b; --blue: #2868b2; --red: #b72c38; --gray: #5b6675; --gold: #9a6b16; --ink: #17212f; --muted: #687386; --line: #dfe5ed; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: #f4f6f8; font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", sans-serif; line-height: 1.5; word-break: keep-all; }
+    button, input, select { font: inherit; }
+    .topline { height: 6px; background: linear-gradient(90deg, var(--navy), var(--blue), var(--red)); }
+    .wrap { width: min(1040px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 80px; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+    h1 { margin: 0; color: var(--navy); font-size: 24px; letter-spacing: -.03em; }
+    h1 small { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; font-weight: 500; }
+    .user { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 13px; }
+    .btn { padding: 9px 14px; border: 1px solid var(--line); border-radius: 10px; background: white; color: #354156; font-weight: 700; cursor: pointer; }
+    .btn:hover { border-color: #9bb6d5; }
+    .btn.primary { border-color: var(--navy); background: var(--navy); color: white; }
+    .btn.danger { border-color: #e4b3b8; background: #fff5f6; color: #9b2933; }
+    .btn.danger:hover { background: var(--red); color: white; border-color: var(--red); }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .card { padding: 22px; border: 1px solid rgba(204,214,226,.9); border-radius: 18px; background: white; box-shadow: 0 12px 34px rgba(25,47,76,.08); margin-bottom: 18px; }
+    .gate { text-align: center; padding: 48px 20px; }
+    .gate p { color: var(--muted); margin: 8px 0 20px; }
+    .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 16px; }
+    .stat { padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: #fbfcfd; }
+    .stat span { display: block; color: var(--muted); font-size: 12px; }
+    .stat strong { font-size: 22px; color: var(--navy); }
+    .stat.yes strong { color: var(--blue); } .stat.no strong { color: var(--red); } .stat.hold strong { color: var(--gray); } .stat.other strong { color: var(--gold); }
+    .toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .toolbar .sp { flex: 1; }
+    .filter { padding: 6px 12px; border: 1px solid var(--line); border-radius: 99px; background: white; color: #4a5668; cursor: pointer; font-size: 13px; }
+    .filter.active { border-color: var(--navy); background: var(--navy); color: white; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 10px 8px; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; }
+    th { color: var(--muted); font-size: 12px; font-weight: 700; white-space: nowrap; }
+    td.c { white-space: pre-wrap; overflow-wrap: anywhere; }
+    td.n { color: #98a2b1; white-space: nowrap; font-size: 12px; }
+    tr.sel td { background: #fff8f8; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 99px; background: #edf2f7; color: #3e4b5e; font-size: 12px; font-weight: 750; white-space: nowrap; }
+    .badge.찬성 { background: #e6f0fb; color: #1d5292; } .badge.반대 { background: #fbe9eb; color: #8d1f2a; } .badge.유보 { background: #eef0f3; color: #3a4453; } .badge.기타 { background: #fbf2dd; color: #6e4b0e; }
+    .empty { padding: 34px; text-align: center; color: var(--muted); }
+    .msg { display: none; margin: 10px 0; padding: 10px 12px; border-radius: 10px; font-size: 13px; }
+    .msg.show { display: block; }
+    .msg.ok { background: #eaf7ef; color: #22673c; } .msg.error { background: #fff0f1; color: #9b2933; }
+    .del { padding: 5px 10px; border: 1px solid #e4b3b8; border-radius: 8px; background: white; color: #9b2933; font-size: 12px; cursor: pointer; white-space: nowrap; }
+    .del:hover { background: var(--red); color: white; border-color: var(--red); }
+    input[type=checkbox] { width: 16px; height: 16px; }
+    @media (max-width: 700px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      th:nth-child(3), td:nth-child(3) { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topline"></div>
+  <main class="wrap">
+    <header>
+      <h1>의견수렴 관리<small>공과대학 교수 익명 의견수렴 · 9·18 연명단체 참여 여부</small></h1>
+      <div class="user" id="userBox"></div>
+    </header>
+
+    <section class="card gate" id="gate">
+      <h2 style="margin:0;color:var(--navy)">관리자 로그인</h2>
+      <p>등록된 구글 계정으로 로그인해야 응답을 관리할 수 있습니다.</p>
+      <button class="btn primary" id="login">Google 계정으로 로그인</button>
+      <div class="msg" id="gateMsg"></div>
+    </section>
+
+    <section id="panel" hidden>
+      <div class="stats">
+        <div class="stat"><span>총 응답</span><strong id="sTotal">0</strong></div>
+        <div class="stat yes"><span>참여 찬성</span><strong id="s찬성">0</strong></div>
+        <div class="stat no"><span>참여 반대</span><strong id="s반대">0</strong></div>
+        <div class="stat hold"><span>유보</span><strong id="s유보">0</strong></div>
+        <div class="stat other"><span>기타 의견</span><strong id="s기타">0</strong></div>
+      </div>
+      <div class="card">
+        <div class="toolbar">
+          <button class="filter active" data-f="전체">전체</button>
+          <button class="filter" data-f="찬성">찬성</button>
+          <button class="filter" data-f="반대">반대</button>
+          <button class="filter" data-f="유보">유보</button>
+          <button class="filter" data-f="기타">기타</button>
+          <button class="filter" data-f="의견">의견 있는 것만</button>
+          <span class="sp"></span>
+          <button class="btn" id="csv">CSV 내려받기</button>
+          <button class="btn danger" id="delSel" disabled>선택 삭제 (0)</button>
+        </div>
+        <div class="msg" id="msg"></div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th><input type="checkbox" id="all" title="전체 선택"></th><th>선택</th><th>시각</th><th style="width:100%">의견</th><th></th></tr></thead>
+            <tbody id="rows"><tr><td colspan="5" class="empty">불러오는 중…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <p style="color:var(--muted);font-size:12px">삭제는 되돌릴 수 없습니다. 삭제된 응답은 공개 페이지에서도 즉시 사라집니다. 공개 페이지: <a href="./" target="_blank" rel="noopener">index.html</a></p>
+    </section>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script>
+    const OWNER_EMAILS = ['baewongyu@gmail.com'];
+    firebase.initializeApp({
+      apiKey: "AIzaSyBqMSwHeBVlPnfr6gB76vpwKnmF0gbPCeU",
+      authDomain: "ssu-eng-survey.firebaseapp.com",
+      projectId: "ssu-eng-survey",
+      storageBucket: "ssu-eng-survey.firebasestorage.app",
+      messagingSenderId: "299620721659",
+      appId: "1:299620721659:web:76ea92aefe6e305acda15e"
+    });
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const COL = db.collection('ssu_survey');
+    const POS = ['찬성', '반대', '유보', '기타'];
+    let rows = [], filter = '전체', selected = new Set(), unsub = null;
+
+    const $ = id => document.getElementById(id);
+    function msg(el, text, kind) { el.textContent = text; el.className = 'msg show ' + kind; if (kind === 'ok') setTimeout(() => el.className = 'msg', 3000); }
+    function fmt(ts) { const d = ts && ts.toDate ? ts.toDate() : null; return d ? `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}` : ''; }
+    function iso(ts) { const d = ts && ts.toDate ? ts.toDate() : null; return d ? d.toISOString() : ''; }
+
+    $('login').addEventListener('click', async () => {
+      try { await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+      catch (e) { msg($('gateMsg'), '로그인 실패: ' + (e.code || e.message), 'error'); }
+    });
+
+    auth.onAuthStateChanged(user => {
+      const ok = user && OWNER_EMAILS.includes(user.email) && user.emailVerified;
+      $('userBox').replaceChildren();
+      if (user) {
+        const s = document.createElement('span'); s.textContent = user.email;
+        const b = document.createElement('button'); b.className = 'btn'; b.textContent = '로그아웃'; b.onclick = () => auth.signOut();
+        $('userBox').append(s, b);
+      }
+      $('gate').hidden = !!ok; $('panel').hidden = !ok;
+      if (user && !ok) msg($('gateMsg'), `${user.email} 계정은 관리자가 아닙니다.`, 'error');
+      if (unsub) { unsub(); unsub = null; }
+      if (ok) subscribe();
+    });
+
+    function subscribe() {
+      unsub = COL.orderBy('createdAt', 'desc').onSnapshot(snap => {
+        rows = [];
+        snap.forEach(doc => { const d = doc.data() || {}; rows.push({ id: doc.id, position: d.position, comment: String(d.comment || ''), createdAt: d.createdAt }); });
+        const ids = new Set(rows.map(r => r.id)); selected.forEach(id => { if (!ids.has(id)) selected.delete(id); });
+        render();
+      }, err => msg($('msg'), '불러오기 실패: ' + (err.code || err.message), 'error'));
+    }
+
+    function visible() {
+      if (filter === '전체') return rows;
+      if (filter === '의견') return rows.filter(r => r.comment.trim());
+      return rows.filter(r => r.position === filter);
+    }
+    function render() {
+      $('sTotal').textContent = rows.length;
+      POS.forEach(p => $('s' + p).textContent = rows.filter(r => r.position === p).length);
+      const tb = $('rows'); tb.replaceChildren();
+      const list = visible();
+      if (!list.length) { const tr = document.createElement('tr'); const td = document.createElement('td'); td.colSpan = 5; td.className = 'empty'; td.textContent = '응답이 없습니다.'; tr.appendChild(td); tb.appendChild(tr); }
+      list.forEach(r => {
+        const tr = document.createElement('tr'); if (selected.has(r.id)) tr.className = 'sel';
+        const t1 = document.createElement('td'); const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = selected.has(r.id);
+        cb.onchange = () => { cb.checked ? selected.add(r.id) : selected.delete(r.id); render(); }; t1.appendChild(cb);
+        const t2 = document.createElement('td'); const bd = document.createElement('span'); bd.className = 'badge ' + r.position; bd.textContent = r.position; t2.appendChild(bd);
+        const t3 = document.createElement('td'); t3.className = 'n'; t3.textContent = fmt(r.createdAt);
+        const t4 = document.createElement('td'); t4.className = 'c'; t4.textContent = r.comment || '(의견 없음)'; if (!r.comment) t4.style.color = '#98a2b1';
+        const t5 = document.createElement('td'); const del = document.createElement('button'); del.className = 'del'; del.textContent = '삭제';
+        del.onclick = () => removeMany([r.id], `이 응답(${r.position}) 1건을 삭제할까요?`); t5.appendChild(del);
+        tr.append(t1, t2, t3, t4, t5); tb.appendChild(tr);
+      });
+      const vis = list.map(r => r.id); const allSel = vis.length && vis.every(id => selected.has(id));
+      $('all').checked = !!allSel; $('all').indeterminate = !allSel && vis.some(id => selected.has(id));
+      $('delSel').disabled = !selected.size; $('delSel').textContent = `선택 삭제 (${selected.size})`;
+    }
+    $('all').addEventListener('change', () => { const vis = visible().map(r => r.id); $('all').checked ? vis.forEach(id => selected.add(id)) : vis.forEach(id => selected.delete(id)); render(); });
+    document.querySelectorAll('.filter').forEach(b => b.addEventListener('click', () => { document.querySelectorAll('.filter').forEach(x => x.classList.remove('active')); b.classList.add('active'); filter = b.dataset.f; render(); }));
+    $('delSel').addEventListener('click', () => removeMany([...selected], `선택한 ${selected.size}건을 삭제할까요? 되돌릴 수 없습니다.`));
+
+    async function removeMany(ids, question) {
+      if (!ids.length || !confirm(question)) return;
+      try {
+        for (let i = 0; i < ids.length; i += 400) {
+          const batch = db.batch(); ids.slice(i, i + 400).forEach(id => batch.delete(COL.doc(id))); await batch.commit();
+        }
+        ids.forEach(id => selected.delete(id));
+        msg($('msg'), `${ids.length}건을 삭제했습니다.`, 'ok');
+      } catch (e) { msg($('msg'), '삭제 실패: ' + (e.code || e.message), 'error'); }
+    }
+
+    $('csv').addEventListener('click', () => {
+      const esc = v => '"' + String(v).replace(/"/g, '""') + '"';
+      const lines = ['시각,선택,의견', ...rows.map(r => [iso(r.createdAt), r.position, r.comment].map(esc).join(','))];
+      const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `의견수렴_${new Date().toISOString().slice(0, 10)}.csv`; a.click(); URL.revokeObjectURL(a.href);
+    });
+  </script>
+</body>
+</html>
