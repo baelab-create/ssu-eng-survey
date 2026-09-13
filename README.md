@@ -3,37 +3,28 @@
 숭실대학교 공과대학 교수님들을 대상으로 **9·18 기자회견 연명단체 명단에 '숭실대학교 교수협의회'가 참여할지 여부**에 대한 익명 의견을 수렴하는 페이지입니다.
 
 - 공개 페이지: https://baelab-create.github.io/ssu-eng-survey/
-- 구성: GitHub Pages(`index.html`) + Google Sheets/Apps Script(`Code.gs`, 응답 저장·공개 집계)
-- 이 저장소만 clone 하면 어느 PC에서든 동일하게 작업할 수 있습니다.
+- 구성: GitHub Pages(`index.html`) + Firebase Firestore(프로젝트 `baelab-ledger`, 컬렉션 `ssu_survey`)
+- 선택지: 찬성 / 반대 / 유보 / 기타 + 자유의견(선택, 최대 1,500자)
+- 로그인·인증 없이 누구나 익명으로 제출할 수 있고, 현황은 실시간으로 갱신됩니다.
 
-## 1. Google Sheets와 Apps Script 만들기 (최초 1회)
+## 동작 방식
 
-1. 새 Google 스프레드시트를 만듭니다. (예: `공대 의견수렴 2026-09`)
-2. `확장 프로그램 → Apps Script`를 엽니다.
-3. 기본 코드를 모두 지우고 이 저장소의 `Code.gs` 내용을 붙여 넣어 저장합니다.
-4. `배포 → 새 배포 → 유형 선택(톱니바퀴) → 웹 앱`을 선택합니다.
-5. 실행 사용자는 `나`, 액세스 권한은 `모든 사용자`로 설정하고 배포합니다. (처음에는 권한 승인 창이 뜹니다)
-6. 발급된 `/exec` 로 끝나는 웹 앱 URL을 복사합니다.
+- 제출 → Firestore `ssu_survey` 컬렉션에 `{ position, comment, createdAt(서버 시각) }` 문서 하나가 추가됩니다.
+- 페이지는 `ssu_survey`를 실시간 구독(onSnapshot)해 집계와 의견 목록을 보여 줍니다.
+- Firestore 규칙(`baelab-ledger/firestore.rules`의 `ssu_survey` 블록)이 허용하는 것: 누구나 읽기, 세 필드만 가진 문서 생성. 수정·삭제는 본사 계정(baewongyu@gmail.com 구글 로그인)만 가능합니다.
+- 같은 브라우저에서는 제출 후 "의견이 접수되었습니다" 안내가 뜨고, "의견 추가로 제출하기"로 다시 제출할 수 있습니다. 중복 제출을 기술적으로 막지는 않습니다(의도된 설계).
 
-## 2. HTML에 API 주소 넣기
+## 규칙 게시 (최초 1회)
 
-`index.html` 하단 스크립트의 다음 값을 웹 앱 URL로 교체합니다.
+`baelab-ledger` 저장소의 `firestore.rules`에 `ssu_survey` 규칙이 들어 있습니다. Firebase 콘솔 → Firestore Database → 규칙 탭에 이 파일 내용을 붙여넣고 **게시**해야 제출·조회가 동작합니다. 게시 전에는 페이지에 "현황을 불러오지 못했습니다" 오류가 뜹니다.
 
-```js
-const API_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL';
-```
+## 응답 확인·관리
 
-예시:
+- Firebase 콘솔 → Firestore Database → `ssu_survey` 컬렉션에서 전체 응답을 볼 수 있습니다.
+- 부적절한 응답은 콘솔에서 해당 문서를 삭제하면 페이지에서 즉시 사라집니다.
+- 의견수렴이 끝나면 콘솔에서 `ssu_survey` 컬렉션을 삭제합니다. (규칙 블록도 함께 지우면 깔끔합니다)
 
-```js
-const API_URL = 'https://script.google.com/macros/s/xxxxxxxxxxxxxxxx/exec';
-```
-
-교체 후 commit & push 하면 GitHub Pages가 자동으로 다시 배포됩니다. (반영까지 1~10분)
-
-> `Code.gs`를 나중에 수정했다면 `배포 → 배포 관리 → 새 버전`으로 다시 배포해야 반영됩니다. URL은 그대로 유지됩니다.
-
-## 3. 다른 PC(노트북)에서 작업하기
+## 다른 PC(노트북)에서 작업하기
 
 ```bash
 git clone https://github.com/baelab-create/ssu-eng-survey.git
@@ -45,17 +36,9 @@ git clone https://github.com/baelab-create/ssu-eng-survey.git
 git add -A && git commit -m "수정 내용" && git push
 ```
 
-## 운영 및 관리
-
-- 응답은 Google Sheet의 `responses` 탭에 저장됩니다. (A 시각, B 선택, C 의견, D 공개)
-- D열 `공개` 체크를 해제하면 해당 응답은 공개 집계와 의견 목록에서 즉시 제외됩니다.
-- 삭제가 필요한 의견은 행을 삭제해도 됩니다.
-- 이름, 학과, 이메일은 수집하지 않으며 Apps Script는 접속자 IP를 시트에 기록하지 않습니다.
-- 완전 익명 방식이므로 한 사람이 여러 번 제출하는 것을 기술적으로 완전히 막지는 않습니다. (같은 브라우저에서는 "이미 제출" 안내가 뜨고, "다시 제출하기"로 재제출 가능)
-- 의견 작성은 선택 사항이며, 자유의견은 즉시 공개되므로 배포 중에는 시트를 주기적으로 확인하는 것이 좋습니다.
+GitHub Pages 반영까지 1~10분 걸립니다. 바로 확인하려면 주소 뒤에 `?v=2`처럼 아무 값을 붙여 캐시를 우회하세요.
 
 ## 파일
 
-- `index.html` — 의견수렴 페이지 (안건, 연명단체 이미지, 투표·의견 폼, 공개 현황)
+- `index.html` — 의견수렴 페이지 (안건, 연명단체 이미지, 4지선다 투표·의견 폼, 실시간 공개 현황)
 - `assets/banner.jpg` — 9·18 기자회견 연명단체 명단 (2026. 9. 8. 4차 버전)
-- `Code.gs` — Google Apps Script 백엔드

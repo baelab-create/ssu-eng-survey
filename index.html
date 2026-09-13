@@ -11,6 +11,7 @@
       --navy: #15345b;
       --blue: #2868b2;
       --red: #b72c38;
+      --gray: #5b6675;
       --gold: #9a6b16;
       --ink: #17212f;
       --muted: #687386;
@@ -50,7 +51,7 @@
     .notice-icon { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #d8e9fa; font-weight: 800; }
     h2 { margin: 0 0 7px; color: var(--navy); font-size: 22px; letter-spacing: -.025em; }
     .sub { margin: 0 0 20px; color: var(--muted); font-size: 14px; }
-    .choices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .choices { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
     .choice { position: relative; }
     .choice input { position: absolute; opacity: 0; pointer-events: none; }
     .choice span { display: flex; min-height: 68px; align-items: center; justify-content: center; border: 2px solid var(--line); border-radius: 14px; background: var(--white); color: #354156; font-weight: 760; cursor: pointer; transition: .18s ease; }
@@ -58,6 +59,7 @@
     .choice input:focus-visible + span { outline: 3px solid rgba(40,104,178,.25); outline-offset: 2px; }
     .choice input:checked + span { border-color: var(--blue); background: #edf5ff; color: #164f8e; box-shadow: inset 0 0 0 1px var(--blue); }
     .choice.no input:checked + span { border-color: var(--red); background: #fff1f2; color: #8d1f2a; box-shadow: inset 0 0 0 1px var(--red); }
+    .choice.hold input:checked + span { border-color: var(--gray); background: #f1f3f6; color: #3a4453; box-shadow: inset 0 0 0 1px var(--gray); }
     .choice.other input:checked + span { border-color: var(--gold); background: #fff8e8; color: #6e4b0e; box-shadow: inset 0 0 0 1px var(--gold); }
     textarea { width: 100%; min-height: 150px; margin-top: 18px; padding: 16px; resize: vertical; border: 1.5px solid var(--line); border-radius: 14px; color: var(--ink); background: #fbfcfd; outline: none; }
     textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(40,104,178,.12); background: white; }
@@ -77,13 +79,13 @@
     .results-head { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
     .total { color: var(--muted); font-size: 14px; white-space: nowrap; }
     .total strong { color: var(--navy); font-size: 24px; }
-    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
     .stat { padding: 17px; border: 1px solid var(--line); border-radius: 14px; background: #fbfcfd; }
     .stat-top { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; }
     .stat strong { font-size: 20px; }
     .bar { height: 7px; margin-top: 12px; overflow: hidden; border-radius: 99px; background: #e9edf2; }
     .bar i { display: block; width: 0; height: 100%; border-radius: inherit; transition: width .5s ease; }
-    .yes i { background: var(--blue); } .no i { background: var(--red); } .other i { background: var(--gold); }
+    .yes i { background: var(--blue); } .no i { background: var(--red); } .hold i { background: var(--gray); } .other i { background: var(--gold); }
     .filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 26px 0 15px; }
     .filter { padding: 7px 12px; border: 1px solid var(--line); border-radius: 99px; background: white; color: #4a5668; cursor: pointer; font-size: 13px; }
     .filter.active { border-color: var(--navy); background: var(--navy); color: white; }
@@ -93,11 +95,13 @@
     .badge { display: inline-block; padding: 3px 9px; border-radius: 99px; background: #edf2f7; color: #3e4b5e; font-size: 12px; font-weight: 750; }
     .badge.찬성 { background: #e6f0fb; color: #1d5292; }
     .badge.반대 { background: #fbe9eb; color: #8d1f2a; }
+    .badge.유보 { background: #eef0f3; color: #3a4453; }
     .badge.기타 { background: #fbf2dd; color: #6e4b0e; }
     .when { color: #98a2b1; font-size: 12px; }
     .comment p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
     .empty { padding: 34px 10px; text-align: center; color: var(--muted); }
-    .setup { display: none; margin-bottom: 18px; padding: 13px 15px; border: 1px solid #ebd49e; border-radius: 12px; background: #fff8e6; color: #76551a; font-size: 14px; }
+    .live { display: inline-block; margin-left: 6px; color: #2f8f5b; font-size: 12px; font-weight: 700; }
+    .live::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 4px; border-radius: 50%; background: #2f8f5b; }
     footer { padding-top: 10px; text-align: center; color: #8993a2; font-size: 12px; line-height: 1.7; }
     @media (max-width: 650px) {
       .wrap { width: min(100% - 22px, 920px); padding-top: 24px; }
@@ -106,7 +110,7 @@
       .agenda { grid-template-columns: 1fr; gap: 8px; }
       .agenda-label { justify-self: start; }
       .agenda-body { font-size: 16px; }
-      .choices, .stats { grid-template-columns: 1fr; }
+      .choices, .stats { grid-template-columns: 1fr 1fr; }
       .choice span { min-height: 56px; }
       .form-foot, .results-head { align-items: stretch; flex-direction: column; }
       .submit { width: 100%; }
@@ -143,8 +147,6 @@
       </figure>
     </section>
 
-    <div id="setup" class="setup">현재 미리보기 모드입니다. 배포 전에 HTML 하단의 API 주소를 입력해 주세요.</div>
-
     <section class="card" aria-labelledby="surveyTitle">
       <div class="notice">
         <span class="notice-icon">i</span>
@@ -154,64 +156,73 @@
       <h2 id="surveyTitle">연명단체 참여에 대한 의견</h2>
       <p class="sub">가장 가까운 의견 하나를 선택해 주세요. 이유나 제안이 있으시면 자유롭게 작성해 주세요. (의견 작성은 선택 사항입니다)</p>
 
-      <div id="done" class="done">이미 이 기기에서 의견을 제출하셨습니다. 감사합니다. <button type="button" id="again">다시 제출하기</button></div>
+      <div id="done" class="done">의견이 접수되었습니다. 감사합니다. <button type="button" id="again">의견 추가로 제출하기</button></div>
 
-      <form id="surveyForm" method="post" target="submitFrame" accept-charset="UTF-8">
+      <form id="surveyForm">
         <div class="choices" role="radiogroup" aria-label="의견 선택">
-          <label class="choice yes"><input type="radio" name="position" value="찬성" required><span>참여에 찬성</span></label>
-          <label class="choice no"><input type="radio" name="position" value="반대" required><span>참여에 반대</span></label>
+          <label class="choice yes"><input type="radio" name="position" value="찬성" required><span>참여 찬성</span></label>
+          <label class="choice no"><input type="radio" name="position" value="반대" required><span>참여 반대</span></label>
+          <label class="choice hold"><input type="radio" name="position" value="유보" required><span>유보</span></label>
           <label class="choice other"><input type="radio" name="position" value="기타" required><span>기타 의견</span></label>
         </div>
-        <textarea name="comment" id="comment" maxlength="1500" placeholder="찬성·반대 이유 또는 기타 의견을 작성해 주세요. (선택, 최대 1,500자)" aria-label="자유 의견"></textarea>
+        <textarea name="comment" id="comment" maxlength="1500" placeholder="찬성·반대·유보 이유 또는 기타 의견을 작성해 주세요. (선택, 최대 1,500자)" aria-label="자유 의견"></textarea>
         <div class="counter"><span id="count">0</span> / 1,500자</div>
-        <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
-        <input type="hidden" name="action" value="submit">
         <div class="form-foot">
           <p class="privacy">개인을 특정할 수 있는 내용은 직접 작성하지 않는 것을 권합니다.</p>
           <button class="submit" type="submit">익명 의견 제출</button>
         </div>
         <div id="formMessage" class="message" role="status"></div>
       </form>
-      <iframe name="submitFrame" id="submitFrame" hidden title="응답 제출"></iframe>
     </section>
 
     <section class="card" aria-labelledby="resultTitle">
       <div class="results-head">
-        <div><h2 id="resultTitle">공개 의견 현황</h2><p class="sub" style="margin:0">모든 응답은 익명으로 표시되며, 새로고침하면 최신 현황이 반영됩니다.</p></div>
+        <div><h2 id="resultTitle">공개 의견 현황<span class="live" id="live" hidden>실시간</span></h2><p class="sub" style="margin:0">모든 응답은 익명으로 표시되며, 새 응답이 들어오면 자동으로 갱신됩니다.</p></div>
         <div class="total">총 응답 <strong id="total">0</strong>건</div>
       </div>
       <div class="stats">
         <div class="stat yes"><div class="stat-top"><span>참여 찬성</span><strong id="yesText">0건 · 0%</strong></div><div class="bar"><i id="yesBar"></i></div></div>
         <div class="stat no"><div class="stat-top"><span>참여 반대</span><strong id="noText">0건 · 0%</strong></div><div class="bar"><i id="noBar"></i></div></div>
+        <div class="stat hold"><div class="stat-top"><span>유보</span><strong id="holdText">0건 · 0%</strong></div><div class="bar"><i id="holdBar"></i></div></div>
         <div class="stat other"><div class="stat-top"><span>기타 의견</span><strong id="otherText">0건 · 0%</strong></div><div class="bar"><i id="otherBar"></i></div></div>
       </div>
       <div class="filters" aria-label="의견 필터">
         <button class="filter active" data-filter="전체">전체</button>
         <button class="filter" data-filter="찬성">찬성</button>
         <button class="filter" data-filter="반대">반대</button>
+        <button class="filter" data-filter="유보">유보</button>
         <button class="filter" data-filter="기타">기타</button>
       </div>
       <div id="comments" class="comments"><div class="empty">등록된 의견이 없습니다.</div></div>
     </section>
 
-    <footer>숭실대학교 공과대학 교수 의견수렴 · 응답 내용은 연명단체 참여 여부 판단을 위한 의견수렴 목적으로만 활용됩니다.<br>성명·학과·이메일·IP 등 개인정보는 수집하지 않습니다.</footer>
+    <footer>숭실대학교 공과대학 교수 의견수렴 · 응답 내용은 연명단체 참여 여부 판단을 위한 참고 목적으로만 활용됩니다.<br>성명·학과·이메일·IP 등 개인정보는 수집하지 않으며, 의견수렴이 끝나면 데이터는 삭제합니다.</footer>
   </main>
 
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
   <script>
-    // Google Apps Script를 웹 앱으로 배포한 뒤 아래 주소만 교체하세요. (README.md 참고)
-    const API_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL';
+    const firebaseConfig = {
+      apiKey: "AIzaSyBXE4UNgFmlnfQ5TkpR6h4DIKE2rjbI0_Q",
+      authDomain: "baelab-ledger.firebaseapp.com",
+      projectId: "baelab-ledger",
+      storageBucket: "baelab-ledger.firebasestorage.app",
+      messagingSenderId: "301215647344",
+      appId: "1:301215647344:web:9026cd464a9403629516b5"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const COL = db.collection('ssu_survey');
+    const POSITIONS = ['찬성', '반대', '유보', '기타'];
+    const IDS = { 찬성: 'yes', 반대: 'no', 유보: 'hold', 기타: 'other' };
     const DONE_KEY = 'ssu_eng_survey_918_done';
     let allComments = [];
     let activeFilter = '전체';
-    let submitting = false;
 
-    const configured = API_URL.startsWith('https://script.google.com/macros/s/');
     const form = document.getElementById('surveyForm');
-    const frame = document.getElementById('submitFrame');
     const message = document.getElementById('formMessage');
     const done = document.getElementById('done');
-    if (configured) form.action = API_URL;
-    else document.getElementById('setup').style.display = 'block';
+    const submitBtn = form.querySelector('.submit');
 
     function isDone() { try { return localStorage.getItem(DONE_KEY) === '1'; } catch (e) { return false; } }
     function setDone(v) { try { v ? localStorage.setItem(DONE_KEY, '1') : localStorage.removeItem(DONE_KEY); } catch (e) {} }
@@ -220,7 +231,7 @@
       done.classList.toggle('show', d);
       form.style.display = d ? 'none' : '';
     }
-    document.getElementById('again').addEventListener('click', () => { setDone(false); applyDone(); });
+    document.getElementById('again').addEventListener('click', () => { setDone(false); applyDone(); message.className = 'message'; });
     applyDone();
 
     const ta = document.getElementById('comment');
@@ -232,20 +243,18 @@
       document.getElementById(id + 'Text').textContent = `${count}건 · ${p}%`;
       document.getElementById(id + 'Bar').style.width = `${p}%`;
     }
-    function render(data) {
-      const counts = data.counts || { 찬성: 0, 반대: 0, 기타: 0 };
-      const total = Number(data.total || 0);
+    function render(rows) {
+      const counts = { 찬성: 0, 반대: 0, 유보: 0, 기타: 0 };
+      rows.forEach(r => { if (counts[r.position] !== undefined) counts[r.position]++; });
+      const total = rows.length;
       document.getElementById('total').textContent = total;
-      updateStat('yes', Number(counts['찬성'] || 0), total);
-      updateStat('no', Number(counts['반대'] || 0), total);
-      updateStat('other', Number(counts['기타'] || 0), total);
-      allComments = Array.isArray(data.comments) ? data.comments : [];
+      POSITIONS.forEach(p => updateStat(IDS[p], counts[p], total));
+      allComments = rows;
       renderComments();
     }
-    function fmtDate(s) {
-      if (!s) return '';
-      const d = new Date(s);
-      if (isNaN(d)) return '';
+    function fmtDate(ts) {
+      const d = ts && ts.toDate ? ts.toDate() : null;
+      if (!d) return '';
       return `${d.getMonth() + 1}/${d.getDate()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
     }
     function renderComments() {
@@ -264,50 +273,46 @@
         const box = document.createElement('article'); box.className = 'comment';
         const top = document.createElement('div'); top.className = 'comment-top';
         const badge = document.createElement('span'); badge.className = 'badge ' + item.position; badge.textContent = item.position;
-        const when = document.createElement('span'); when.className = 'when'; when.textContent = fmtDate(item.at);
+        const when = document.createElement('span'); when.className = 'when'; when.textContent = fmtDate(item.createdAt);
         top.append(badge, when);
         const p = document.createElement('p'); p.textContent = item.comment;
         box.append(top, p); root.appendChild(box);
       });
     }
-    function loadResults() {
-      if (!configured) return render({ total: 0, counts: {}, comments: [] });
-      const old = document.getElementById('jsonpLoader'); if (old) old.remove();
-      const script = document.createElement('script');
-      script.id = 'jsonpLoader';
-      script.src = `${API_URL}?action=list&callback=receiveSurveyData&_=${Date.now()}`;
-      script.onerror = () => showMessage('현황을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.', 'error');
-      document.body.appendChild(script);
-    }
-    window.receiveSurveyData = data => render(data);
 
-    form.addEventListener('submit', event => {
-      if (!configured) {
-        event.preventDefault();
-        showMessage('먼저 Google Apps Script 웹 앱 주소를 설정해 주세요.', 'error');
-        return;
-      }
-      if (!form.reportValidity()) { event.preventDefault(); return; }
-      submitting = true;
-      form.querySelector('.submit').disabled = true;
-      showMessage('의견을 저장하고 있습니다…', 'ok');
-      // 응답이 15초 안에 오지 않으면 버튼을 다시 활성화합니다.
-      setTimeout(() => {
-        if (!submitting) return;
-        submitting = false;
-        form.querySelector('.submit').disabled = false;
-        showMessage('저장 확인이 지연되고 있습니다. 아래 현황을 새로고침해 확인해 주세요.', 'error');
-      }, 15000);
+    // 실시간 구독: 새 응답이 들어오면 자동 갱신
+    COL.orderBy('createdAt', 'desc').onSnapshot(snap => {
+      const rows = [];
+      snap.forEach(doc => {
+        const d = doc.data() || {};
+        if (POSITIONS.includes(d.position)) rows.push({ position: d.position, comment: String(d.comment || ''), createdAt: d.createdAt });
+      });
+      render(rows);
+      document.getElementById('live').hidden = false;
+    }, err => {
+      console.error(err);
+      showMessage('현황을 불러오지 못했습니다. 잠시 후 새로고침해 주세요.', 'error');
     });
-    frame.addEventListener('load', () => {
-      if (!submitting) return;
-      submitting = false;
-      form.reset();
-      document.getElementById('count').textContent = '0';
-      form.querySelector('.submit').disabled = false;
-      setDone(true); applyDone();
-      showMessage('익명 의견이 저장되었습니다. 공개 현황을 갱신합니다.', 'ok');
-      setTimeout(loadResults, 900);
+
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+      const position = form.position.value;
+      const comment = ta.value.replace(/\r\n?/g, '\n').trim().slice(0, 1500);
+      submitBtn.disabled = true;
+      showMessage('의견을 저장하고 있습니다…', 'ok');
+      try {
+        await COL.add({ position, comment, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+        form.reset();
+        document.getElementById('count').textContent = '0';
+        setDone(true); applyDone();
+        showMessage('익명 의견이 저장되었습니다. 아래 현황에 바로 반영됩니다.', 'ok');
+      } catch (e) {
+        console.error(e);
+        showMessage('저장에 실패했습니다. 잠시 후 다시 시도해 주세요. (' + (e.code || e.message || '') + ')', 'error');
+      } finally {
+        submitBtn.disabled = false;
+      }
     });
     function showMessage(text, kind) {
       message.textContent = text; message.className = `message show ${kind}`;
@@ -316,7 +321,6 @@
       document.querySelectorAll('.filter').forEach(x => x.classList.remove('active'));
       btn.classList.add('active'); activeFilter = btn.dataset.filter; renderComments();
     }));
-    loadResults();
   </script>
 </body>
 </html>
