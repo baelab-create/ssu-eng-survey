@@ -19,10 +19,13 @@
 
 `firestore.rules`가 콘솔에 게시된 규칙 원본입니다. 바꿀 일이 있으면 Firebase 콘솔 → ssu-eng-survey → Firestore Database → 규칙 탭에 붙여넣고 게시합니다.
 
-## 응답 확인·관리
+## 응답 확인·관리 (관리자 페이지)
 
-- Firebase 콘솔 → Firestore Database → `ssu_survey` 컬렉션에서 전체 응답을 볼 수 있습니다.
-- 부적절한 응답은 콘솔에서 해당 문서를 삭제하면 페이지에서 즉시 사라집니다.
+- 관리자 페이지: https://baelab-create.github.io/ssu-eng-survey/admin.html
+- 구글 로그인(baewongyu@gmail.com만 허용, `OWNER_EMAILS`)이 필요합니다. Firebase 콘솔의 Authentication → Google 제공업체가 켜져 있고, 승인된 도메인에 baelab-create.github.io가 등록되어 있습니다.
+- 기능: 응답 실시간 목록(선택·시각·의견), 필터, 체크박스 선택 삭제·개별 삭제, CSV 내려받기. 삭제하면 공개 페이지에서도 즉시 사라집니다.
+- 작성자는 수정·삭제할 수 없고, 삭제는 관리자만 가능합니다(규칙 `allow delete: if isOwner()`).
+- Firebase 콘솔 → Firestore Database → `ssu_survey`에서도 같은 데이터를 볼 수 있습니다.
 - 의견수렴이 끝나면 Firebase 콘솔 → 프로젝트 설정 → 일반 → 맨 아래 "프로젝트 삭제"로 프로젝트째 삭제합니다. (삭제 후 30일 유예 뒤 완전 삭제) GitHub 저장소도 Settings → Delete this repository로 지우면 끝입니다.
 
 ## 다른 PC(노트북)에서 작업하기
@@ -42,5 +45,6 @@ GitHub Pages 반영까지 1~10분 걸립니다. 바로 확인하려면 주소 �
 ## 파일
 
 - `index.html` — 의견수렴 페이지 (안건, 연명단체 이미지, 4지선다 투표·의견 폼, 실시간 공개 현황)
+- `admin.html` — 관리자 페이지 (구글 로그인, 응답 목록·선택 삭제·CSV)
 - `assets/banner.jpg` — 9·18 기자회견 연명단체 명단 (2026. 9. 8. 4차 버전)
 - `firestore.rules` — Firestore 보안 규칙 (콘솔에 게시된 것과 동일)
