@@ -203,13 +203,14 @@
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
   <script>
+    // 학교 의견수렴 전용 Firebase 프로젝트 (ssu-eng-survey). 의견수렴 종료 후 프로젝트째 삭제 예정
     const firebaseConfig = {
-      apiKey: "AIzaSyBXE4UNgFmlnfQ5TkpR6h4DIKE2rjbI0_Q",
-      authDomain: "baelab-ledger.firebaseapp.com",
-      projectId: "baelab-ledger",
-      storageBucket: "baelab-ledger.firebasestorage.app",
-      messagingSenderId: "301215647344",
-      appId: "1:301215647344:web:9026cd464a9403629516b5"
+      apiKey: "AIzaSyBqMSwHeBVlPnfr6gB76vpwKnmF0gbPCeU",
+      authDomain: "ssu-eng-survey.firebaseapp.com",
+      projectId: "ssu-eng-survey",
+      storageBucket: "ssu-eng-survey.firebasestorage.app",
+      messagingSenderId: "299620721659",
+      appId: "1:299620721659:web:76ea92aefe6e305acda15e"
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
