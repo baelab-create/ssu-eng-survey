@@ -6,6 +6,7 @@
 - 구성: GitHub Pages(`index.html`) + Firebase Firestore(전용 프로젝트 `ssu-eng-survey`, 컬렉션 `ssu_survey`)
 - 배랩·닥터배 프로젝트(baelab-ledger)와는 완전히 분리된 별도 Firebase 프로젝트입니다. 의견수렴이 끝나면 프로젝트째 삭제합니다.
 - 선택지: 찬성 / 반대 / 유보 / 기타 + 자유의견(선택, 최대 1,500자)
+- 의견 수렴 기간: 2026년 9월 14일(일) 24:00(KST)까지. 페이지는 마감 후 자동으로 제출을 닫고(`DEADLINE` 상수), Firestore 규칙도 마감 이후 생성을 거부합니다(`timestamp.date(2026, 9, 14) + duration.value(15, 'h')` = 9월 14일 15:00 UTC). 마감을 바꾸려면 두 곳을 같이 수정합니다.
 - 로그인·인증 없이 누구나 익명으로 제출할 수 있고, 현황은 실시간으로 갱신됩니다.
 
 ## 동작 방식

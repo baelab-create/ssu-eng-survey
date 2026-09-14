@@ -43,6 +43,13 @@
     .agenda-body strong { color: var(--red); }
     .agenda-points { margin: 12px 0 0; padding-left: 18px; color: #3f4b5f; font-size: 14.5px; }
     .agenda-points li { margin: 4px 0; }
+    .deadline { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 0 0 22px; padding: 14px 18px; border: 1px solid #f3d3a3; border-radius: 14px; background: #fff7ea; color: #6e4b0e; font-size: 14.5px; }
+    .deadline b { color: var(--red); }
+    .deadline .left { font-weight: 800; white-space: nowrap; }
+    .deadline.closed { border-color: #cfd6df; background: #f1f3f6; color: #3a4453; }
+    .deadline.closed b { color: #3a4453; }
+    .closed-box { display: none; padding: 18px; border-radius: 14px; background: #f1f3f6; color: #3a4453; font-size: 15px; }
+    .closed-box.show { display: block; }
     .banner { margin: 22px 0 0; }
     .banner a { display: block; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: white; }
     .banner img { display: block; width: 100%; height: auto; }
@@ -125,7 +132,7 @@
     <header>
       <p class="eyebrow">SOONGSIL UNIVERSITY · COLLEGE OF ENGINEERING</p>
       <h1>공과대학 교수 익명 의견수렴</h1>
-      <p class="lead">9·18 기자회견 연명단체 명단에 숭실대학교 교수협의회가 참여할지에 대해 공과대학 교수님들의 의견을 익명으로 수렴합니다.</p>
+      <p class="lead">9·18 기자회견 연명단체 명단에 숭실대학교 교수협의회가 참여할지에 대해 공과대학 교수님들의 의견을 익명으로 수렴합니다.<br><b>의견 수렴 기간: 2026년 9월 14일(일) 밤 12시까지</b></p>
     </header>
 
     <section class="card" aria-labelledby="agendaTitle">
@@ -137,6 +144,7 @@
             <li>기자회견 일자: 2026년 9월 18일</li>
             <li>주관: 한국사립대학교수회연합회·한국교수노동조합연맹 등 전국 교수단체</li>
             <li>현재 연명단체: 총 31개 단체 (2026. 9. 8. 4차 버전 기준, 아래 이미지 참조)</li>
+            <li><b>의견 수렴 마감: 2026년 9월 14일(일) 24:00</b> — 마감 후에는 제출이 닫히고 결과만 볼 수 있습니다</li>
           </ul>
         </div>
       </div>
@@ -153,10 +161,12 @@
         <span class="notice-icon">i</span>
         <div>본 페이지는 성명·학과·이메일·접속 정보를 수집하지 않는 <b>완전 익명</b> 의견수렴 페이지입니다. 제출한 선택과 의견은 아래에 익명으로 공개됩니다.</div>
       </div>
-      <div style="height:26px"></div>
+      <div style="height:20px"></div>
+      <div class="deadline" id="deadline"><span>의견 수렴 마감 <b>2026년 9월 14일(일) 밤 12시</b></span><span class="left" id="left"></span></div>
       <h2 id="surveyTitle">연명단체 참여에 대한 의견</h2>
       <p class="sub">가장 가까운 의견 하나를 선택해 주세요. 이유나 제안이 있으시면 자유롭게 작성해 주세요. (의견 작성은 선택 사항입니다)</p>
 
+      <div id="closedBox" class="closed-box">의견 수렴이 마감되었습니다(2026년 9월 14일 24:00). 참여해 주셔서 감사합니다. 아래에서 결과를 확인하실 수 있습니다.</div>
       <div id="done" class="done">의견이 접수되었습니다. 감사합니다. <button type="button" id="again">의견 추가로 제출하기</button></div>
 
       <form id="surveyForm">
@@ -218,6 +228,7 @@
     const POSITIONS = ['찬성', '반대', '유보', '기타'];
     const IDS = { 찬성: 'yes', 반대: 'no', 유보: 'hold', 기타: 'other' };
     const DONE_KEY = 'ssu_eng_survey_918_done';
+    const DEADLINE = new Date('2026-09-15T00:00:00+09:00'); // 2026-09-14 밤 12시 (KST)
     let allComments = [];
     let activeFilter = '전체';
 
@@ -228,11 +239,28 @@
 
     function isDone() { try { return localStorage.getItem(DONE_KEY) === '1'; } catch (e) { return false; } }
     function setDone(v) { try { v ? localStorage.setItem(DONE_KEY, '1') : localStorage.removeItem(DONE_KEY); } catch (e) {} }
+    function isClosed() { return Date.now() >= DEADLINE.getTime(); }
     function applyDone() {
+      const closed = isClosed();
       const d = isDone();
-      done.classList.toggle('show', d);
-      form.style.display = d ? 'none' : '';
+      document.getElementById('closedBox').classList.toggle('show', closed);
+      done.classList.toggle('show', !closed && d);
+      form.style.display = (closed || d) ? 'none' : '';
     }
+    function tickDeadline() {
+      const bar = document.getElementById('deadline');
+      const left = document.getElementById('left');
+      const ms = DEADLINE.getTime() - Date.now();
+      if (ms <= 0) {
+        bar.classList.add('closed');
+        left.textContent = '마감되었습니다';
+        applyDone();
+        return;
+      }
+      const h = Math.floor(ms / 3600000), m = Math.floor(ms % 3600000 / 60000);
+      left.textContent = h > 0 ? `남은 시간 ${h}시간 ${m}분` : `남은 시간 ${m}분`;
+    }
+    tickDeadline(); setInterval(tickDeadline, 30000);
     document.getElementById('again').addEventListener('click', () => { setDone(false); applyDone(); message.className = 'message'; });
     applyDone();
 
@@ -298,6 +326,7 @@
 
     form.addEventListener('submit', async event => {
       event.preventDefault();
+      if (isClosed()) { applyDone(); showMessage('의견 수렴이 마감되었습니다.', 'error'); return; }
       if (!form.reportValidity()) return;
       const position = form.position.value;
       const comment = ta.value.replace(/\r\n?/g, '\n').trim().slice(0, 1500);
@@ -311,7 +340,7 @@
         showMessage('익명 의견이 저장되었습니다. 아래 현황에 바로 반영됩니다.', 'ok');
       } catch (e) {
         console.error(e);
-        showMessage('저장에 실패했습니다. 잠시 후 다시 시도해 주세요. (' + (e.code || e.message || '') + ')', 'error');
+        showMessage(e.code === 'permission-denied' && isClosed() ? '의견 수렴이 마감되었습니다.' : '저장에 실패했습니다. 잠시 후 다시 시도해 주세요. (' + (e.code || e.message || '') + ')', 'error');
       } finally {
         submitBtn.disabled = false;
       }
